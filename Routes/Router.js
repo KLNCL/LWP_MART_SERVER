@@ -3,6 +3,7 @@ const userController = require('../controller/userController');
 const authController = require('../controller/authController');
 const productConrtoller = require('../controller/productController');
 const orderController = require('../controller/orderController');
+const chatController = require('../controller/chatController');
 
 
 //user routs
@@ -34,6 +35,10 @@ router.get('/orders/sellerid', orderController.findOrderSid);
 router.get('/order/userid', orderController.findOrderUid);
 router.post('/orderupdate/:orderID', orderController.updateOrder);
 router.delete('/deleteorder/:orderID', orderController.deleteOrder);
+
+
+//message routs
+router.get('/message',chatController.getMessages);
 
 
 module.exports = router;
