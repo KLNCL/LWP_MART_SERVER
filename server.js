@@ -18,7 +18,8 @@ app.use(
          extended: true,
      })
  );
-
+ 
+ // Routes
 app.use('/api', userRouter);
 
 
