@@ -1,10 +1,29 @@
 const mongoose = require('mongoose');
 
-const messageSchema = new mongoose.Schema({
-  senderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // ID of the sender
-  recipientId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // ID of the recipient
-  message: { type: String, required: true }, // The actual message
-  timestamp: { type: Date, default: Date.now }, // Timestamp of when the message was sent
+const Schema = mongoose.Schema;
+
+const messageSchema = new Schema({
+    sender_id: { // The ID of the user sending the message
+        type: String,
+        required: true
+    },
+
+    receiver_id: { // The ID of the user receiving the message
+        type: String,
+        required: true
+    },
+
+    message: { // The actual text message
+        type: String,
+        required: true
+    },
+
+    timestamp: { // Time when the message was sent
+        type: Date,
+        default: Date.now
+    }
 });
 
-module.exports = mongoose.model('Message', messageSchema);
+const Message = mongoose.model("Message", messageSchema);
+
+module.exports = Message;
