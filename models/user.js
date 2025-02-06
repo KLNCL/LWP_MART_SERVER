@@ -2,46 +2,48 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-
-    userName :{
-        type : String,
-        required: true
-    },
-
-    firstName :{
-        type : String
-    },
-    lastName :{
-        type : String
-        
-    },
-    email :{
+    userName: {
         type: String,
-        required: true
-        
+        required: true,
+        trim: true
     },
-    contactNo :{
-        type: String
-        
+    firstName: {
+        type: String,
+        trim: true
     },
-    role :{
+    lastName: {
+        type: String,
+        trim: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,  // Ensures no duplicate emails
+        trim: true
+    },
+    contactNo: {
+        type: String,
+        match: /^[0-9]+$/, // Ensures only numbers are entered
+        trim: true
+    },
+    role: {
         type: String,
         enum: ["user", "admin", "seller"],
-        default: "user",
-
+        default: "user"
     },
-    image: { type: String }
-    ,
+    image: { 
+        type: String 
+    },
     activation: { 
-        type: Boolean
-    
+        type: Boolean,
+        default: false
     },
     password: { 
         type: String,
         required: true
-    },
-})
+    }
+}, { timestamps: true }); // Adds createdAt & updatedAt automatically
 
-const User = mongoose.model("User",userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
