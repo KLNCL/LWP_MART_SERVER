@@ -1,34 +1,58 @@
 const Message = require('../models/Message');
+const User = require('../models/User');
 
-// Save a new message
-const saveMessage = async (data) => {
+// Send a message
+exports.sendMessage = async (req, res) => {
   try {
-    const newMessage = new Message(data);
+    const { sender_id, receiver_id, message } = req.body;
+
+    // Validate input
+    if (!sender_id || !receiver_id || !message) {
+      return res.status(400).json({ error: 'Sender ID, Receiver ID, and Message are required' });
+    }
+
+    // Save the message to the database
+    const newMessage = new Message({ sender_id, receiver_id, message });
     await newMessage.save();
-    return newMessage;
-  } catch (error) {
-    throw new Error('Error saving message: ' + error.message);
+
+    res.status(201).json(newMessage);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// Fetch chat history between two users
-const getMessages = async (req, res) => {
-  const { senderId, recipientId } = req.query;
-
+// Get messages between two users
+exports.getMessages = async (req, res) => {
   try {
+    const { sender, receiver } = req.params;
+
+    // Fetch messages between the two users
     const messages = await Message.find({
       $or: [
-        { senderId, recipientId }, // Messages sent by the user to the recipient
-        { senderId: recipientId, recipientId: senderId }, // Messages sent by the recipient to the user
+        { sender_id: sender, receiver_id: receiver },
+        { sender_id: receiver, receiver_id: sender },
       ],
-    }).sort({ timestamp: 1 }); // Sort by timestamp in ascending order
+    }).sort({ timestamp: 1 });
 
-    res.json(messages);
-  } catch (error) {
-    console.error('Error fetching messages:', error);
-    res.status(500).json({ error: 'Failed to fetch messages' });
+    res.status(200).json(messages);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-exports.saveMessage = saveMessage ;
-exports.getMessages = getMessages;
+// Search users by username
+exports.searchUsers = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    // Search for users whose username matches the query
+    const users = await User.find({ username: { $regex: query, $options: 'i' } });
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
