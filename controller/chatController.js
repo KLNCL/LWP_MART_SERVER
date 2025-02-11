@@ -1,5 +1,5 @@
 const Message = require('../models/Message');
-const User = require('../models/User');
+const User = require('../models/user');
 
 // Send a message
 exports.sendMessage = async (req, res) => {
@@ -41,6 +41,41 @@ exports.getMessages = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+// Get messages between all users
+exports.getAllMessages = async (req, res) => {
+  try {
+    // Fetch messages between the two users
+    const messages = await Message.find({
+    }).sort({ timestamp: 1 });
+
+    res.status(200).json(messages);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Get reciver id by sender id
+exports.getAllMessagesById = async (req, res) => {
+  try {
+    const { sender } = req.params;
+    // Fetch messages between the two users
+    const messages = await Message.find({
+      $or: [
+        { sender_id: sender }
+      ],
+    }).sort({ timestamp: 1 });
+
+    res.status(200).json(messages);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
+
 
 // Search users by username
 exports.searchUsers = async (req, res) => {
