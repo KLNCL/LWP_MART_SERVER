@@ -7,14 +7,19 @@ const userSchema = new Schema({
         required: true,
         trim: true
     },
-    firstName: {
+    fullName: {
         type: String,
         trim: true
     },
-    lastName: {
+
+    address:{
         type: String,
-        trim: true
     },
+
+    discription:{
+        type: String
+    },
+
     email: {
         type: String,
         required: true,
@@ -44,6 +49,7 @@ const userSchema = new Schema({
     }
 }, { timestamps: true }); // Adds createdAt & updatedAt automatically
 
-const User = mongoose.model("User", userSchema);
+// const User = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("user", userSchema);
 
 module.exports = User;
