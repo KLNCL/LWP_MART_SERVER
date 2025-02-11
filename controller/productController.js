@@ -60,9 +60,9 @@ const findProductUid = async (req, res, next) => {
 
 // Create product
 const addProduct = async (req, res, next) => {
-    const { user_id, productName, discription, price, qty, image} = req.body;
+    const { user_id, productName, discription, price, qty, image } = req.body;
 
-    const newProdut = new Product({
+    const newProduct = new Product({
         user_id,
         productName,
         discription,
@@ -70,17 +70,21 @@ const addProduct = async (req, res, next) => {
         qty,
         image,
     });
-    
+
     try {
-        if (!product){
+    
+        if (!newProduct) {
             return next(errorHandler(404, "Please Insert Product"));
         }
-        await newProdut.save();
-        return res.status(200).json({ message: "Produt added successfuly" });
+
+        await newProduct.save();
+        return res.status(200).json({ message: "Product added successfully" });
+
     } catch (error) {
         next(error);
     }
 };
+
 
 
 //update product
