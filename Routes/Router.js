@@ -41,6 +41,10 @@ router.delete('/deleteorder/:orderID', orderController.deleteOrder);
 router.post('/sendmessage', chatController.sendMessage); // Send a new message
 router.get('/messages/:sender/:receiver', chatController.getMessages); // Get chat messages between two users
 router.get('/search-users', chatController.searchUsers); // Search users
+router.get('/messages' , chatController.getAllMessages); //get all message
+router.get('/messages/:sender', chatController.getAllMessagesById); // Get chat messages byi d
+
+
 
 module.exports = router;
 
