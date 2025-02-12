@@ -14,14 +14,23 @@ const cartSchema = new Schema({
         required: true
     },
 
+    productName2 : {
+        type : String,
+    },
+
     price :{
         type : String,
-        required: true
+        // required: true
     },
     cartqty :{
         type: String,
         required: true
-    }
+    },
+
+    image2: { 
+        type: String }
+
+
 })
 
 const Cart = mongoose.model("Cart",cartSchema);
