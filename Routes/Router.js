@@ -4,7 +4,7 @@ const authController = require('../controller/authController');
 const productConrtoller = require('../controller/productController');
 const orderController = require('../controller/orderController');
 const chatController = require('../controller/chatController'); 
-
+const cartController = require('../controller/cartController'); 
 
 //user routs
 router.get('/users', userController.getUsers);
@@ -43,6 +43,12 @@ router.get('/messages/:sender/:receiver', chatController.getMessages); // Get ch
 router.get('/search-users', chatController.searchUsers); // Search users
 router.get('/messages' , chatController.getAllMessages); //get all message
 router.get('/messages/:sender', chatController.getAllMessagesById); // Get chat messages byi d
+
+//Cart routs
+router.post('/addToCart',cartController.addToCart);
+router.delete('/removeCart/:cartId',cartController.removeFromCart);
+router.post('/updateQty/:cartId', cartController.updateCartQuantity);
+router.get('/getUser/:user_id', cartController.getUserCart);
 
 
 
