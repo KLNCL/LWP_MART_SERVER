@@ -64,14 +64,18 @@ const addUser = async (req, res, next) => {
 //update user
 const updateUser = async (req, res, next) =>{
     const user = req.params.userID;
-    const {userName, password } = req.body;
+    const {fullName, address, discription, contactNo, role, image } = req.body;
 
     try {
 
         const updateUser = await User.findByIdAndUpdate(user, {
             $set: {
-                userName: userName,
-                password: password
+                fullName: fullName,
+                address: address,
+                discription: discription,
+                contactNo: contactNo,
+                role: role,
+                image: image
             }
         },{new: true})
 
@@ -98,7 +102,6 @@ const deleteUser = async (req, res, next) => {
         next(error);
     }
 };
-
 
 
 exports.getUsers = getUsers;
