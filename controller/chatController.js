@@ -1,7 +1,6 @@
 const Message = require('../models/Message');
 const User = require('../models/user');
 
-// Send a message
 exports.sendMessage = async (req, res) => {
   try {
     const { sender_id, receiver_id, message } = req.body;
@@ -14,6 +13,12 @@ exports.sendMessage = async (req, res) => {
     // Save the message to the database
     const newMessage = new Message({ sender_id, receiver_id, message });
     await newMessage.save();
+
+    // Emit WebSocket event for new message
+    req.app.get('socketio').emit("newMessage", {
+      sender_id,
+      receiver_id,
+    });
 
     res.status(201).json(newMessage);
   } catch (err) {
@@ -60,12 +65,14 @@ exports.getAllMessages = async (req, res) => {
 exports.getAllMessagesById = async (req, res) => {
   try {
     const { sender } = req.params;
-    // Fetch messages between the two users
+
+    // Fetch messages and populate sender and receiver details
     const messages = await Message.find({
-      $or: [
-        { sender_id: sender }
-      ],
-    }).sort({ timestamp: 1 });
+      $or: [{ sender_id: sender }, { receiver_id: sender }],
+    })
+      .populate('sender_id', 'userName') // Populate sender details
+      .populate('receiver_id', 'userName') // Populate receiver details
+      .sort({ timestamp: 1 });
 
     res.status(200).json(messages);
   } catch (err) {
@@ -75,17 +82,50 @@ exports.getAllMessagesById = async (req, res) => {
 };
 
 
-
-
-// Search users by username
+// Search users by username and return user ID
 exports.searchUsers = async (req, res) => {
   try {
     const { query } = req.query;
 
-    // Search for users whose username matches the query
-    const users = await User.find({ username: { $regex: query, $options: 'i' } });
+    // Search for users whose username matches the query (case insensitive)
+    const users = await User.find(
+      { userName: { $regex: query, $options: 'i' } },
+      { _id: 1, userName: 1 } // Only return _id and userName
+    );
 
     res.status(200).json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
+// getchated users
+exports.getChattedUsers = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Fetch messages where the current user is either the sender or receiver
+    const messages = await Message.find({
+      $or: [{ sender_id: userId }, { receiver_id: userId }],
+    })
+      .populate('sender_id', 'userName') // Populate sender details
+      .populate('receiver_id', 'userName'); // Populate receiver details
+
+    // Extract unique users
+    const users = new Map();
+    messages.forEach((msg) => {
+      const otherUser = msg.sender_id._id === userId ? msg.receiver_id : msg.sender_id;
+      if (!users.has(otherUser._id)) {
+        users.set(otherUser._id, {
+          _id: otherUser._id,
+          userName: otherUser.userName,
+        });
+      }
+    });
+
+    res.status(200).json(Array.from(users.values()));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

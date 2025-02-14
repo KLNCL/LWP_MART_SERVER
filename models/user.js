@@ -5,6 +5,7 @@ const userSchema = new Schema({
     userName: {
         type: String,
         required: true,
+        unique: true,
         trim: true
     },
     fullName: {
@@ -41,7 +42,7 @@ const userSchema = new Schema({
     },
     activation: { 
         type: Boolean,
-        default: false
+        default: true
     },
     password: { 
         type: String,

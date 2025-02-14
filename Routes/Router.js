@@ -43,6 +43,7 @@ router.get('/messages/:sender/:receiver', chatController.getMessages); // Get ch
 router.get('/search-users', chatController.searchUsers); // Search users
 router.get('/messages' , chatController.getAllMessages); //get all message
 router.get('/messages/:sender', chatController.getAllMessagesById); // Get chat messages byi d
+router.get('/chatted-users/:userId', chatController.getChattedUsers);
 
 //Cart routs
 router.post('/addToCart',cartController.addToCart);
