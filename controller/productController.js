@@ -2,10 +2,10 @@ const { response } = require('express');
 const Product = require('../models/product');
 const { errorHandler } = require('../utils/error');
 const mongoose = require('mongoose');
+const { upload, uploadFile } = require("../multer");
 
 
 // find all products
-
 const getProducts = async (req, res, next) => {
     try {
         const allProduct = await Product.find();
@@ -60,30 +60,38 @@ const findProductUid = async (req, res, next) => {
 
 // Create product
 const addProduct = async (req, res, next) => {
-    const { user_id, productName, discription, price, qty, image} = req.body;
-
-    const newProdut = new Product({
-        user_id,
-        productName,
-        discription,
-        price,
-        qty,
-        image,
-    });
-    
     try {
-        if (!product){
-            return next(errorHandler(404, "Please Insert Product"));
+      const { user_id, productName, discription, price, qty } = req.body;
+  
+      if (!req.file) {
+        return next(errorHandler(400, "Please upload an image"));
+      }
+  
+      // Upload the file to GridFS
+      uploadFile(req, res, async (error) => {
+        if (error) {
+          return next(error);
         }
-        await newProdut.save();
-        return res.status(200).json({ message: "Produt added successfuly" });
+  
+        const newProduct = new Product({
+          user_id,
+          productName,
+          discription,
+          price,
+          qty,
+          image: req.file.id, // Store the GridFS file ID
+        });
+  
+        await newProduct.save();
+        return res.status(200).json({ message: "Product added successfully" });
+      });
     } catch (error) {
-        next(error);
+      next(error);
     }
-};
+  };
 
 
-//update product
+//update product 
 const updateProdut = async (req, res, next) =>{
     const product = req.params.productID;
     const {productName, discription, price, qty, image} = req.body;
