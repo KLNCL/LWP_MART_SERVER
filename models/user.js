@@ -12,15 +12,12 @@ const userSchema = new Schema({
         type: String,
         trim: true
     },
-
-    address:{
+    address: {
         type: String,
     },
-
-    discription:{
+    description: {
         type: String
     },
-
     email: {
         type: String,
         required: true,
@@ -47,10 +44,11 @@ const userSchema = new Schema({
     password: { 
         type: String,
         required: true
-    }
+    },
+
+    chattedWith: [Schema.Types.ObjectId] // Array to store user IDs of chatted users
 }, { timestamps: true }); // Adds createdAt & updatedAt automatically
 
-// const User = mongoose.model("User", userSchema);
-const User = mongoose.models.User || mongoose.model("user", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 module.exports = User;

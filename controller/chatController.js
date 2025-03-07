@@ -1,5 +1,5 @@
 const Message = require('../models/Message');
-const User = require('../models/user');
+const User = require('../models/User'); // Ensure the path is correct
 
 exports.sendMessage = async (req, res) => {
   try {
@@ -14,11 +14,25 @@ exports.sendMessage = async (req, res) => {
     const newMessage = new Message({ sender_id, receiver_id, message });
     await newMessage.save();
 
-    // Emit WebSocket event for new message
-    req.app.get('socketio').emit("newMessage", {
-      sender_id,
-      receiver_id,
+    // Update chattedWith field for both sender and receiver
+    await User.findByIdAndUpdate(sender_id, {
+      $addToSet: { chattedWith: receiver_id }
     });
+
+    await User.findByIdAndUpdate(receiver_id, {
+      $addToSet: { chattedWith: sender_id }
+    });
+
+    // Emit WebSocket event for new message
+    const io = req.app.get('socketio');
+    if (io) {
+      io.emit("newMessage", {
+        sender_id,
+        receiver_id,
+      });
+    } else {
+      console.error("Socket.io instance not available");
+    }
 
     res.status(201).json(newMessage);
   } catch (err) {
@@ -51,8 +65,7 @@ exports.getMessages = async (req, res) => {
 exports.getAllMessages = async (req, res) => {
   try {
     // Fetch messages between the two users
-    const messages = await Message.find({
-    }).sort({ timestamp: 1 });
+    const messages = await Message.find({}).sort({ timestamp: 1 });
 
     res.status(200).json(messages);
   } catch (err) {
@@ -61,7 +74,7 @@ exports.getAllMessages = async (req, res) => {
   }
 };
 
-// Get reciver id by sender id
+// Get messages by sender ID
 exports.getAllMessagesById = async (req, res) => {
   try {
     const { sender } = req.params;
@@ -81,7 +94,6 @@ exports.getAllMessagesById = async (req, res) => {
   }
 };
 
-
 // Search users by username and return user ID
 exports.searchUsers = async (req, res) => {
   try {
@@ -100,8 +112,7 @@ exports.searchUsers = async (req, res) => {
   }
 };
 
-
-// getchated users
+// Get chatted users
 exports.getChattedUsers = async (req, res) => {
   try {
     const { userId } = req.params;

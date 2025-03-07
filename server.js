@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 const userRouter = require("./Routes/Router");
 const http = require("http");
 const { Server } = require("socket.io");
-
+const { GridFSBucket } = require("mongodb");
 dotenv.config(); // Load environment variables
 
 const app = express();
@@ -15,6 +15,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" }, // Allow all origins for WebSockets
 });
+
+// Attach socketio to app
+app.set('socketio', io);
 
 // Middleware
 app.use(cors());
@@ -32,12 +35,35 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB Connection Error"));
-db.once("open", () => console.log("✅ MongoDB Connected"));
+
+// Initialize GridFS
+let gfs;
+db.once("open", () => {
+  console.log("MongoDB Connected");
+  gfs = new GridFSBucket(db.db, {
+    bucketName: "uploads", // Name of the GridFS bucket
+  });
+});
+
+// Serve images from GridFS
+app.get("/api/image/:id", (req, res) => {
+  if (!gfs) {
+    return res.status(500).json({ message: "GridFS not initialized" });
+  }
+
+  const fileId = new mongoose.Types.ObjectId(req.params.id);
+  const downloadStream = gfs.openDownloadStream(fileId);
+
+  downloadStream.on("error", (error) => {
+    res.status(404).json({ message: "Image not found" });
+  });
+
+  downloadStream.pipe(res);
+});
 
 // WebSocket Events
 io.on("connection", (socket) => {
-  console.log("✅ New client connected:", socket.id);
+  console.log("New client connected:", socket.id);
 
   // Listen for new messages
   socket.on("sendMessage", (data) => {
@@ -53,7 +79,7 @@ io.on("connection", (socket) => {
 
   // Handle client disconnect
   socket.on("disconnect", () => {
-    console.log("❌ Client disconnected:", socket.id);
+    console.log("Client disconnected:", socket.id);
   });
 });
 

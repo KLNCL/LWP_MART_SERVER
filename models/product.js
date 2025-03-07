@@ -24,8 +24,11 @@ const productSchema = new Schema({
         type: String,
         // required: true
     },
+    
     image: { 
-        type: String }
+        type: mongoose.Schema.Types.ObjectId, // Store the GridFS file ID
+    ref: "uploads.files", // Reference to the GridFS files collection
+     }
 
 })
 
