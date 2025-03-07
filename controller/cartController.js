@@ -90,6 +90,7 @@ const getUserCart = async (req, res) => {
                 const product = await Product.findById(item.product_id);
                 return {
                     _id: item._id,
+                    seller_id: product.user_id,
                     product_id: item.product_id,
                     productName2: product.productName,
                     image2: product.image,

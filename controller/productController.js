@@ -6,6 +6,7 @@ const { upload, uploadFile } = require("../multer");
 
 
 // find all products
+
 const getProducts = async (req, res, next) => {
     try {
         const allProduct = await Product.find();
@@ -43,7 +44,7 @@ const findProduct = async (req, res, next) => {
 
 // Find products by user_id
 const findProductUid = async (req, res, next) => {
-    const user_id = req.body.user_id;
+    const {user_id} = req.query;
 
     try {
         const products = await Product.find({ user_id });
@@ -91,7 +92,8 @@ const addProduct = async (req, res, next) => {
   };
 
 
-//update product 
+
+//update product
 const updateProdut = async (req, res, next) =>{
     const product = req.params.productID;
     const {productName, discription, price, qty, image} = req.body;
