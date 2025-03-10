@@ -86,20 +86,21 @@ const addUser = async (req, res, next) => {
 //update user
 const updateUser = async (req, res, next) =>{
     const user = req.params.userID;
-    const {fullName, address, discription, contactNo, role, image } = req.body;
+    const { fullName, address, description, contactNo, role, image } = req.body;
 
     try {
 
         const updateUser = await User.findByIdAndUpdate(user, {
             $set: {
-                fullName: fullName,
-                address: address,
-                discription: discription,
-                contactNo: contactNo,
-                role: role,
-                image: image
+              fullName: fullName,
+              address: address,
+              description: description, // Fixed spelling
+              contactNo: contactNo,
+              role: role,
+              image: image
             }
-        },{new: true})
+          }, { new: true });
+          
 
         return res.status(200).json({message:"User Updated"})
         
