@@ -107,9 +107,6 @@ const getUserCart = async (req, res) => {
 };
 
 
-
-
-
 exports.addToCart = addToCart;
 exports.removeFromCart = removeFromCart;
 exports.updateCartQuantity = updateCartQuantity;

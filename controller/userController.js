@@ -1,5 +1,5 @@
 const { response } = require('express');
-const User = require('../models/User');
+const User = require('../models/user');
 const { errorHandler } = require('../utils/error')
 const mongoose = require('mongoose');
 
@@ -101,7 +101,6 @@ const updateUser = async (req, res, next) =>{
             }
           }, { new: true });
           
-
         return res.status(200).json({message:"User Updated"})
         
     } catch (error) {

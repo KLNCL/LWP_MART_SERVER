@@ -1,5 +1,5 @@
 const { response } = require('express');
-const User = require('../models/User');
+const User = require('../models/user');
 const { errorHandler } = require('../utils/error');
 const {createTokens} = require ('../utils/genarateToken');
 

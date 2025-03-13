@@ -6,7 +6,6 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 
 // get all orders
-
 const getOrders = async (req, res, next) => {
   try {
     const allorders = await orders.find();
@@ -56,7 +55,6 @@ const findOrderSid = async (req, res, next) => {
 };
 
 // create order
-
 const addOrder = async (req, res, next) => {
 
   const {
