@@ -21,6 +21,7 @@ router.post('/userDeactivation/:userID', userController.userDeactivation);
 
 //loging routs
 router.post('/login', authController.signin);
+router.post('/adminlogin', authController.adminSignin);
 
 
 //product routs
