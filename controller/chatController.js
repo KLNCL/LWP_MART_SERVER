@@ -1,5 +1,5 @@
 const Message = require('../models/Message');
-const User = require('../models/User'); // Ensure the path is correct
+const User = require('../models/user');
 
 exports.sendMessage = async (req, res) => {
   try {

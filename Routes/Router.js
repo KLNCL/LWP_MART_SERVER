@@ -16,7 +16,8 @@ router.get('/user/:userID', userController.findUser);
 router.post('/createusers', userController.addUser);
 router.post('/updateuser/:userID', userController.updateUser);
 router.delete('/deleteuser/:userID', userController.deleteUser);
-
+router.post('/userActivation/:userID', userController.userActivation);
+router.post('/userDeactivation/:userID', userController.userDeactivation);
 
 //loging routs
 router.post('/login', authController.signin);

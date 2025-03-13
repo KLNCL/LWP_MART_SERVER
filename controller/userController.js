@@ -109,6 +109,45 @@ const updateUser = async (req, res, next) =>{
     }
 }
 
+const userActivation = async (req, res, next) => {
+    const UID = req.params.userID;
+
+    try {
+        const userActivation = await User.findByIdAndUpdate(UID, {
+            $set: {
+                activation: true,
+            }
+          }, { new: true });
+
+          return res.status(200).json({message:"User Activate succesfull"})
+
+        
+    } catch (error) {
+        next(error);
+    }
+
+};
+
+const userDeactivation = async (req, res, next) => {
+    const UID = req.params.userID;
+    try {
+        const userDeactivation = await User.findByIdAndUpdate(UID, {
+            $set: {
+                activation: false,
+            }
+          }, { new: true });
+
+          return res.status(200).json({message:"User Deactivate succesfull"})
+
+        
+    } catch (error) {
+        next(error);
+    }
+
+};
+
+
+
 //delete user
 const deleteUser = async (req, res, next) => {
     const UID = req.params.userID;
@@ -127,8 +166,11 @@ const deleteUser = async (req, res, next) => {
 };
 
 
+
 exports.getUsers = getUsers;
 exports.findUser = findUser;
 exports.addUser = addUser;
 exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
+exports.userActivation = userActivation;
+exports.userDeactivation = userDeactivation;

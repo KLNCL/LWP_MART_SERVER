@@ -40,8 +40,9 @@ const orderSchema = new Schema({
     contact :{
         type: String,
         required: true
-    }
-    
+    },
+    image: { 
+        type: String }
 })
 
 const Order = mongoose.model("Order",orderSchema);

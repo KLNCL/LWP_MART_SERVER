@@ -3,6 +3,7 @@ const orders = require("../models/order");
 const { errorHandler } = require("../utils/error");
 const mongoose = require("mongoose");
 const Order = require("../models/order");
+const Product = require("../models/product");
 
 // get all orders
 
@@ -57,6 +58,7 @@ const findOrderSid = async (req, res, next) => {
 // create order
 
 const addOrder = async (req, res, next) => {
+
   const {
     user_id,
     seller_id,
@@ -65,8 +67,12 @@ const addOrder = async (req, res, next) => {
     address,
     orderqty,
     contact,
-    image,
   } = req.body;
+
+  const product = await Product.findById(product_id);
+  if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+  }
 
   const newOrder = new Order({
     user_id,
@@ -76,7 +82,7 @@ const addOrder = async (req, res, next) => {
     address,
     orderqty,
     contact,
-    image,
+    image: product.image,
   });
 
   try {
